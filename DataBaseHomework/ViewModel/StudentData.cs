@@ -1,0 +1,26 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DataBaseHomework.ViewModel
+{
+    public class StudentData
+    {
+        public string Sno { get; set; }
+        public string Sname { get; set; }
+        public string Sex { get; set; }
+        public string Age { get; set; }
+    }
+
+    public class StudentDataViewModel
+    {
+        public ObservableCollection<StudentData> StudentDatas = new ObservableCollection<StudentData>();
+        public StudentDataViewModel()
+        {
+
+        }
+    }
+}
