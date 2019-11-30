@@ -80,7 +80,7 @@ namespace DataBaseHomework.View
                     localSettings.Values["ManagePassword"] = "19081908";
                     if (localSettings.Values["Mno"].ToString().Equals(UserName.Text) && localSettings.Values["ManagePassword"].Equals(UserPassword.Password))
                     {
-                        MainPage.Current.MyFrame.Navigate(typeof(StudentView));
+                        MainPage.Current.MyFrame.Navigate(typeof(ManagementView));
                         PopupNotice popupNotice = new PopupNotice("登录成功");
                         popupNotice.ShowAPopup();
                     }

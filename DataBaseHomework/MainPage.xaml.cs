@@ -46,7 +46,7 @@ namespace DataBaseHomework
             conn.CreateTable(typeof(Student));
             conn.CreateTable(typeof(Course));
             conn.CreateTable(typeof(SC));
-            MyFrame.Navigate(typeof(Login));
+            MyFrame.Navigate(typeof(ManagementView));
         }
 
         

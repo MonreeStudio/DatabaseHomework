@@ -5,89 +5,10 @@
     xmlns:local="using:DataBaseHomework.View"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local1="using:DataBaseHomework.ViewModel"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="2*"/>
-        </Grid.RowDefinitions>
-        <StackPanel Margin="10" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
-            <Button x:Name="AddStudent" Content="添加学生信息" CornerRadius="15" Margin="10" Foreground="White" Click="AddStudent_Click"/>
-            <Button x:Name="DeletStudent" Content="删除学生信息" CornerRadius="15" Margin="10" Background="{x:Bind AddStudent.Background}" Foreground="White" Click="DeletStudent_Click"/>
-            <Button x:Name="UpdateStudent" Content="修改学生信息" CornerRadius="15" Margin="10" Background="{x:Bind AddStudent.Background}" Foreground="White" Click="UpdateStudent_Click"/>
-            <Button x:Name="QueryStudent" Content="查询单个学生信息" CornerRadius="15" Margin="10" Background="{x:Bind AddStudent.Background}" Foreground="White" Click="QueryStudent_Click"/>
-            <Button x:Name="QueryAll" Content="查询全部" CornerRadius="15" Margin="10" Background="{x:Bind AddStudent.Background}" Foreground="White" Click="QueryAll_Click"/>
-            <Button x:Name="ClearList" Content="清空列表" CornerRadius="15" Margin="10" Background="{x:Bind AddStudent.Background}" Foreground="White" Click="ClearList_Click"/>
-        </StackPanel>
-        <Border Grid.Row="1" Margin="20" BorderBrush="{x:Bind AddStudent.Background}" BorderThickness="3" CornerRadius="10">
-            <ListView ItemsSource="{x:Bind StuViewModel.StudentDatas}" Width="Auto">
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="Padding" Value="0" />
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="local1:StudentData">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{x:Bind Sname}" Width="200" FontSize="23" Margin="10,10,50,10"/>
-                            <TextBlock Text="{x:Bind Sno}" FontSize="23" Margin="10,10,50,10"/>
-                            <TextBlock Text="{x:Bind Sex}" FontSize="23" Margin="10,10,50,10"/>
-                            <TextBlock Text="{x:Bind Age}" FontSize="23" Margin="10"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </Border>
-        <ContentDialog x:Name="AddDialog"
-                       Title="添加学生信息"
-                       Foreground="{x:Bind AddStudent.Background}"
-                       PrimaryButtonText="确认"
-                       CloseButtonText="取消"
-                       BorderBrush="{x:Bind AddStudent.Background}"
-                       DefaultButton="Primary"
-                       PrimaryButtonClick="AddDialog_PrimaryButtonClick">
-            <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                <TextBox  x:Name="SnameTB" Text="" BorderBrush="{x:Bind AddStudent.Background}" PlaceholderText="姓名" Margin="10" CornerRadius="10"/>
-                <TextBox x:Name="SnoTB" Text="" BorderBrush="{x:Bind AddStudent.Background}" PlaceholderText="学号" Margin="10" CornerRadius="10"/>
-                <ComboBox x:Name="SexTB" Text="" BorderBrush="{x:Bind AddStudent.Background}"  Header="性别" Foreground="{x:Bind AddStudent.Background}" Margin="10" CornerRadius="10" SelectionChanged="SexTB_SelectionChanged">
-                    <x:String>男</x:String>
-                    <x:String>女</x:String>
-                </ComboBox>
-                <TextBox BorderBrush="{x:Bind AddStudent.Background}" x:Name="AgeTB" Text="" PlaceholderText="年龄" Margin="10" CornerRadius="10"/>
-                <Button x:Name="ClearBtn" Background="{x:Bind AddStudent.Background}" Content="重置" Foreground="White" CornerRadius="8" Click="ClearBtn_Click" HorizontalAlignment="Center"/>
-            </StackPanel>
-        </ContentDialog>
 
-        <ContentDialog x:Name="DeleteDialog"
-                       Title="删除学生信息"
-                       Foreground="{x:Bind AddStudent.Background}"
-                       BorderBrush="{x:Bind AddStudent.Background}"
-                       DefaultButton="Primary">
-            <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                <TextBox  x:Name="DeleteSno" Text="" BorderBrush="{x:Bind AddStudent.Background}" PlaceholderText="待删除学生学号" Margin="10" CornerRadius="10"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button x:Name="DeleteBtn" Background="{x:Bind AddStudent.Background}" Content="确认" Foreground="White" Margin="10" Width="100" CornerRadius="8" Click="DeleteBtn_Click"  HorizontalAlignment="Center"/>
-                    <Button x:Name="CloseBtn" Content="取消" Margin="10" Width="100" CornerRadius="8" Click="CloseBtn_Click"  HorizontalAlignment="Center"/>
-                </StackPanel>
-            </StackPanel>
-        </ContentDialog>
-        
-        <ContentDialog x:Name="QueryDialog"
-                       Title="查找单个学生信息"
-                       Foreground="{x:Bind AddStudent.Background}"
-                       BorderBrush="{x:Bind AddStudent.Background}"
-                       DefaultButton="Primary">
-            <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-                <TextBox  x:Name="QuerySno" Text="" BorderBrush="{x:Bind AddStudent.Background}" PlaceholderText="待查询学生学号" Margin="10" CornerRadius="10"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button x:Name="QueryBtn" Background="{x:Bind AddStudent.Background}" Content="确认" Foreground="White" Margin="10" Width="100" CornerRadius="8" Click="QueryBtn_Click"  HorizontalAlignment="Center"/>
-                    <Button x:Name="CloseBtn2" Content="取消" Margin="10" Width="100" CornerRadius="8" Click="CloseBtn2_Click"  HorizontalAlignment="Center"/>
-                </StackPanel>
-            </StackPanel>
-        </ContentDialog>
     </Grid>
 </Page>
