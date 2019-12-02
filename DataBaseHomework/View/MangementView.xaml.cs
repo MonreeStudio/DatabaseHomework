@@ -36,6 +36,7 @@ namespace DataBaseHomework.View
         public StudentDataViewModel StuViewModel = new StudentDataViewModel();
         public TeacherDataViewModel TeaViewModel = new TeacherDataViewModel();
         private string _sex;
+        private static StudentData StudentItem;
         public ManagementView()
         {
             this.InitializeComponent();
@@ -50,15 +51,6 @@ namespace DataBaseHomework.View
             await AddDialog.ShowAsync();
         }
 
-        private async void DeletStudent_Click(object sender, RoutedEventArgs e)
-        {
-            await DeleteDialog.ShowAsync();
-        }
-
-        private void UpdateStudent_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
 
         private async void QueryStudent_Click(object sender, RoutedEventArgs e)
         {
@@ -74,9 +66,9 @@ namespace DataBaseHomework.View
         {
             try
             {
-                if (SnameTB.Text != "" && SnoTB.Text != "" && _sex != "" && AgeTB.Text != "")
+                if (SnameTB.Text != "" && SnoTB.Text != "" && _sex != "" && AgeTB.Text != ""&&Spassword.Text!="")
                 {
-                    conn.Insert(new Student() { Sname = SnameTB.Text, Sno = SnoTB.Text, Sex = _sex, Age = Convert.ToInt32(AgeTB.Text) });
+                    conn.Insert(new Student() { Sname = SnameTB.Text, Sno = SnoTB.Text, Sex = _sex, Age = Convert.ToInt32(AgeTB.Text), Password = Spassword.Text });
                     PopupNotice popupNotice = new PopupNotice("添加成功");
                     popupNotice.ShowAPopup();
                 }
@@ -114,30 +106,13 @@ namespace DataBaseHomework.View
         }
 
 
-        private async void DeleteBtn_Click(object sender, RoutedEventArgs e)
+        private void DeleteBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (DeleteSno.Text != "")
-            {
-                var datalist = conn.Query<Student>("select *from Student where Sno = ?", DeleteSno.Text);
-                if (datalist.Count != 0)
-                {
-                    conn.Execute("delete from Student where Sno = ?", DeleteSno.Text);
-                    
-                    DeleteDialog.Hide();
-                    PopupNotice popupNotice = new PopupNotice("删除成功");
-                    popupNotice.ShowAPopup();
-                }
-                else
-                {
-                    MessageDialog AboutDialog = new MessageDialog("该学生不存在！", "提示");
-                    await AboutDialog.ShowAsync();
-                }
-            }
-            else
-            {
-                MessageDialog AboutDialog = new MessageDialog("请输入待删除学生的学号！", "提示");
-                await AboutDialog.ShowAsync();
-            }
+            conn.Execute("delete from Student where Sno = ?", StudentItem.Sno.Substring(3));
+            StuViewModel.StudentDatas.Remove(StudentItem);
+            DeleteDialog.Hide();
+            PopupNotice popupNotice = new PopupNotice("删除成功");
+            popupNotice.ShowAPopup();
         }
 
         private void CloseBtn_Click(object sender, RoutedEventArgs e)
@@ -155,7 +130,7 @@ namespace DataBaseHomework.View
                     StuViewModel.StudentDatas.Clear();
                     foreach(var item in datalist)
                     {
-                        StuViewModel.StudentDatas.Add(new StudentData() { Sname = "姓名：" + item.Sname, Sno = "学号" + item.Sno, Sex = "性别：" + item.Sex, Age = "年龄：" + item.Age.ToString() });
+                        StuViewModel.StudentDatas.Add(new StudentData() { Sname = "姓名：" + item.Sname, Sno = "学号:" + item.Sno, Sex = "性别：" + item.Sex, Age = "年龄：" + item.Age.ToString(), Password = "密码：" + item.Password });
                     }
                     QueryDialog.Hide();
                     PopupNotice popupNotice = new PopupNotice("查找成功");
@@ -192,7 +167,7 @@ namespace DataBaseHomework.View
             {
                 try
                 {
-                    StuViewModel.StudentDatas.Add(new StudentData() { Sname = "姓名：" + item.Sname, Sno = "学号：" + item.Sno, Sex = "性别：" + item.Sex, Age = "年龄：" + item.Age });
+                    StuViewModel.StudentDatas.Add(new StudentData() { Sname = "姓名：" + item.Sname, Sno = "学号：" + item.Sno, Sex = "性别：" + item.Sex, Age = "年龄：" + item.Age, Password = "密码：" + item.Password });
                 }
                 catch (ArgumentNullException ex)
                 {
@@ -246,6 +221,62 @@ namespace DataBaseHomework.View
         {
             StudentBorder.Visibility = Visibility.Collapsed;
             TeacherBorder.Visibility = Visibility.Visible;
+        }
+
+        private void ListView_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            var _item = (e.OriginalSource as FrameworkElement)?.DataContext as StudentData;
+            StudentItem = _item;
+        }
+
+        private async void DeleteItem_Click(object sender, RoutedEventArgs e)
+        {
+            await DeleteDialog.ShowAsync();
+        }
+
+        private async void UpdateItem_Click(object sender, RoutedEventArgs e)
+        {
+            SnoTB2.Text = StudentItem.Sno;
+            SnameTB2.Text = StudentItem.Sname.Substring(3);
+            if (StudentItem.Sex.Substring(3).Equals("男"))
+                SexTB2.SelectedIndex = 0;
+            else
+                SexTB2.SelectedIndex = 1;
+            AgeTB2.Text = StudentItem.Age.Substring(3);
+            Spassword2.Text = StudentItem.Password.Substring(3);
+            await UpdateDialog.ShowAsync();    
+        }
+
+        private async void UpdateDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            if(SnameTB2.Text!=""&&SnoTB2.Text!=""&&SexTB2!=null&&AgeTB2.Text!=""&&Spassword2.Text!="")
+            {
+                
+                conn.Execute("update Student set Sno = ? where Sno = ?", SnoTB2.Text,SnoTB2.Text);
+                conn.Execute("update Student set Sname = ? where Sno = ?", SnameTB2.Text, SnoTB2.Text);
+                conn.Execute("update Student set Sex = ? where Sno = ?", SexTB2.SelectedItem.ToString(), SnoTB2.Text);
+                conn.Execute("update Student set Age = ? where Sno = ?", AgeTB2.Text, SnoTB2.Text);
+                conn.Execute("update Student set Password = ? where Sno = ?", Spassword2.Text, SnoTB2.Text);
+                //conn.Insert(new Student() { Sname = SnameTB.Text, Sno = SnoTB.Text, Sex = _sex, Age = Convert.ToInt32(AgeTB.Text), Password = Spassword.Text });
+                PopupNotice popupNotice = new PopupNotice("修改成功");
+                popupNotice.ShowAPopup();
+            }
+            else
+            {
+                MessageDialog AboutDialog = new MessageDialog("请将信息填写完整！", "提示");
+                await AboutDialog.ShowAsync();
+            }
+
+        }
+
+        private void SexTB2_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void Clear2Btn_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

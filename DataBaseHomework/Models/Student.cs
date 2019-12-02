@@ -14,5 +14,6 @@ namespace DataBaseHomework.Models
         public string Sname { get; set; }
         public string Sex { get; set; }
         public int Age { get; set; }
+        public string Password { get; set; }
     }
 }

@@ -13,6 +13,7 @@ namespace DataBaseHomework.ViewModel
         public string Sname { get; set; }
         public string Sex { get; set; }
         public string Age { get; set; }
+        public string Password { get; set; }
     }
 
     public class StudentDataViewModel

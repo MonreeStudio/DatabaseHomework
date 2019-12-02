@@ -34,9 +34,7 @@ namespace DataBaseHomework.View
             //建立数据库连接   
             conn = new SQLiteConnection(new SQLitePlatformWinRT(), path);
             //建表              
-            conn.CreateTable(typeof(Teacher));
-            conn.CreateTable(typeof(Student));
-            conn.CreateTable(typeof(Course));
+            
         }
     }
 }
