@@ -13,6 +13,6 @@ namespace DataBaseHomework.Models
         public string Tno { get; set; }
         public string Tname { get; set; }
         public string JobTitle { get; set; }
-        public string Salary { get; set; }
+        public double Salary { get; set; }
     }
 }

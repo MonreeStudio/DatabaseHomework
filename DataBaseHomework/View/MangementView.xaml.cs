@@ -37,6 +37,7 @@ namespace DataBaseHomework.View
         public TeacherDataViewModel TeaViewModel = new TeacherDataViewModel();
         private string _sex;
         private static StudentData StudentItem;
+        private static TeacherData TeacherItem;
         public ManagementView()
         {
             this.InitializeComponent();
@@ -46,6 +47,39 @@ namespace DataBaseHomework.View
                 StuList.IsChecked = true;
         }
 
+        private void RefreshStuList()
+        {
+            StuViewModel.StudentDatas.Clear();
+            List<Student> datalist = conn.Query<Student>("select * from Student");
+            foreach (var item in datalist)
+            {
+                try
+                {
+                    StuViewModel.StudentDatas.Add(new StudentData() { Sname = "姓名：" + item.Sname, Sno = "学号：" + item.Sno, Sex = "性别：" + item.Sex, Age = "年龄：" + item.Age, Password = "密码：" + item.Password });
+                }
+                catch (ArgumentNullException ex)
+                {
+                    throw ex;
+                }
+            }
+        }
+
+        private void RefreshTeaList()
+        {
+            TeaViewModel.TeacherDatas.Clear();
+            List<Teacher> datalist = conn.Query<Teacher>("select * from Teacher");
+            foreach (var item in datalist)
+            {
+                try
+                {
+                    TeaViewModel.TeacherDatas.Add(new TeacherData() { Tname = "姓名：" + item.Tname, Tno = "工号：" + item.Tno, JobTitle = "职称：" + item.JobTitle, Salary = "工资：" + item.Salary.ToString() });
+                }
+                catch (ArgumentNullException ex)
+                {
+                    throw ex;
+                }
+            }
+        }
         private async void AddStudent_Click(object sender, RoutedEventArgs e)
         {
             await AddDialog.ShowAsync();
@@ -71,6 +105,7 @@ namespace DataBaseHomework.View
                     conn.Insert(new Student() { Sname = SnameTB.Text, Sno = SnoTB.Text, Sex = _sex, Age = Convert.ToInt32(AgeTB.Text), Password = Spassword.Text });
                     PopupNotice popupNotice = new PopupNotice("添加成功");
                     popupNotice.ShowAPopup();
+                    RefreshStuList();
                 }
                 else
                 {
@@ -83,11 +118,6 @@ namespace DataBaseHomework.View
                 MessageDialog AboutDialog = new MessageDialog("该学生已存在！", "提示");
                 await AboutDialog.ShowAsync();
             }
-        }
-
-        private void ClearList_Click(object sender, RoutedEventArgs e)
-        {
-            
         }
 
         private void SexTB_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -161,19 +191,7 @@ namespace DataBaseHomework.View
 
         private void QueryAllStudent_Click(object sender, RoutedEventArgs e)
         {
-            StuViewModel.StudentDatas.Clear();
-            List<Student> datalist = conn.Query<Student>("select * from Student");
-            foreach (var item in datalist)
-            {
-                try
-                {
-                    StuViewModel.StudentDatas.Add(new StudentData() { Sname = "姓名：" + item.Sname, Sno = "学号：" + item.Sno, Sex = "性别：" + item.Sex, Age = "年龄：" + item.Age, Password = "密码：" + item.Password });
-                }
-                catch (ArgumentNullException ex)
-                {
-                    throw ex;
-                }
-            }
+            RefreshStuList();
         }
 
         private void ClearStudentList_Click(object sender, RoutedEventArgs e)
@@ -181,34 +199,24 @@ namespace DataBaseHomework.View
             StuViewModel.StudentDatas.Clear();
         }
 
-        private void AddTeacher_Click(object sender, RoutedEventArgs e)
+        private async void AddTeacher_Click(object sender, RoutedEventArgs e)
         {
-
+            await AddDialog2.ShowAsync();
         }
 
-        private void DeletTeacher_Click(object sender, RoutedEventArgs e)
+        private async void QueryTeacher_Click(object sender, RoutedEventArgs e)
         {
-
-        }
-
-        private void UpdateTeacher_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void QueryTeacher_Click(object sender, RoutedEventArgs e)
-        {
-
+            await QueryDialog2.ShowAsync();
         }
 
         private void ClearTeacherList_Click(object sender, RoutedEventArgs e)
         {
-            
+            TeaViewModel.TeacherDatas.Clear();
         }
 
         private void QueryAllTeacher_Click_1(object sender, RoutedEventArgs e)
         {
-
+            RefreshTeaList();
         }
 
         private void StuList_Checked(object sender, RoutedEventArgs e)
@@ -251,15 +259,13 @@ namespace DataBaseHomework.View
         {
             if(SnameTB2.Text!=""&&SnoTB2.Text!=""&&SexTB2!=null&&AgeTB2.Text!=""&&Spassword2.Text!="")
             {
-                
-                conn.Execute("update Student set Sno = ? where Sno = ?", SnoTB2.Text,SnoTB2.Text);
-                conn.Execute("update Student set Sname = ? where Sno = ?", SnameTB2.Text, SnoTB2.Text);
-                conn.Execute("update Student set Sex = ? where Sno = ?", SexTB2.SelectedItem.ToString(), SnoTB2.Text);
-                conn.Execute("update Student set Age = ? where Sno = ?", AgeTB2.Text, SnoTB2.Text);
-                conn.Execute("update Student set Password = ? where Sno = ?", Spassword2.Text, SnoTB2.Text);
-                //conn.Insert(new Student() { Sname = SnameTB.Text, Sno = SnoTB.Text, Sex = _sex, Age = Convert.ToInt32(AgeTB.Text), Password = Spassword.Text });
+                conn.Execute("update Student set Sname = ? where Sno = ?", SnameTB2.Text, SnoTB2.Text.Substring(3));
+                conn.Execute("update Student set Sex = ? where Sno = ?", SexTB2.SelectedItem.ToString(), SnoTB2.Text.Substring(3));
+                conn.Execute("update Student set Age = ? where Sno = ?", AgeTB2.Text, SnoTB2.Text.Substring(3));
+                conn.Execute("update Student set Password = ? where Sno = ?", Spassword2.Text, SnoTB2.Text.Substring(3));
                 PopupNotice popupNotice = new PopupNotice("修改成功");
                 popupNotice.ShowAPopup();
+                RefreshStuList();
             }
             else
             {
@@ -269,14 +275,147 @@ namespace DataBaseHomework.View
 
         }
 
-        private void SexTB2_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
         private void Clear2Btn_Click(object sender, RoutedEventArgs e)
         {
+            SnameTB2.Text = "";
+            SexTB2.Text = "";
+            AgeTB2.Text = "";
+            Spassword2.Text = "";
+        }
 
+        private void TClearBtn_Click(object sender, RoutedEventArgs e)
+        {
+            TnameTB.Text = "";
+            TnoTB.Text = "";
+            JobTitleTB.Text = "";
+            SalaryTB.Text = "";
+        }
+
+        private async void AddDialog2_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            try
+            {
+                if (TnoTB.Text != "" && TnameTB.Text != "" && JobTitleTB.Text != "" && SalaryTB.Text != "")
+                {
+                    conn.Insert(new Teacher() { Tname = TnameTB.Text, Tno = TnoTB.Text, JobTitle = JobTitleTB.Text, Salary = Convert.ToDouble(SalaryTB.Text) });
+                    PopupNotice popupNotice = new PopupNotice("添加成功");
+                    popupNotice.ShowAPopup();
+                    RefreshTeaList();
+                }
+                else
+                {
+                    MessageDialog AboutDialog = new MessageDialog("请将信息填写完整！", "提示");
+                    await AboutDialog.ShowAsync();
+                }
+            }
+            catch(FormatException)
+            {
+                MessageDialog AboutDialog = new MessageDialog("信息格式出现错误！", "提示");
+                await AboutDialog.ShowAsync();
+            }
+            catch
+            {
+                MessageDialog AboutDialog = new MessageDialog("该教师已存在！", "提示");
+                await AboutDialog.ShowAsync();
+            }
+        }
+
+        private async void Tupdate_Click(object sender, RoutedEventArgs e)
+        {
+            TnoTB2.Text = TeacherItem.Tno;
+            TnameTB2.Text = TeacherItem.Tname.Substring(3);
+            JobTitleTB2.Text = TeacherItem.JobTitle.Substring(3);
+            SalaryTB2.Text = TeacherItem.Salary.Substring(3);
+            await UpdateDialog2.ShowAsync();
+        }
+
+        private async void Tdelete_Click(object sender, RoutedEventArgs e)
+        {
+            await DeleteDialog2.ShowAsync();
+        }
+
+        private void TListView_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            var _item = (e.OriginalSource as FrameworkElement)?.DataContext as TeacherData;
+            TeacherItem = _item;
+        }
+
+        private void CloseBtn2_Click_1(object sender, RoutedEventArgs e)
+        {
+            QueryDialog.Hide();
+        }
+
+        private void DeleteBtn2_Click(object sender, RoutedEventArgs e)
+        {
+            conn.Execute("delete from Teacher where Tno = ?", TeacherItem.Tno.Substring(3));
+            TeaViewModel.TeacherDatas.Remove(TeacherItem);
+            DeleteDialog2.Hide();
+            PopupNotice popupNotice = new PopupNotice("删除成功");
+            popupNotice.ShowAPopup();
+        }
+
+        private void TCloseBtn_Click(object sender, RoutedEventArgs e)
+        {
+            DeleteDialog2.Hide();
+        }
+
+        private void TCloseBtn2_Click(object sender, RoutedEventArgs e)
+        {
+            QueryDialog2.Hide();
+        }
+
+        private async void QueryBtn2_Click(object sender, RoutedEventArgs e)
+        {
+            if (QueryTno.Text != "")
+            {
+                var datalist = conn.Query<Teacher>("select *from Teacher where Tno = ?", QueryTno.Text);
+                if (datalist.Count != 0)
+                {
+                    TeaViewModel.TeacherDatas.Clear();
+                    foreach (var item in datalist)
+                    {
+                        TeaViewModel.TeacherDatas.Add(new TeacherData() { Tname = "姓名：" + item.Tname, Tno = "工号:" + item.Tno, JobTitle = "职称：" + item.JobTitle, Salary = "年龄：" + item.Salary });
+                    }
+                    QueryDialog2.Hide();
+                    PopupNotice popupNotice = new PopupNotice("查找成功");
+                    popupNotice.ShowAPopup();
+                }
+                else
+                {
+                    MessageDialog AboutDialog = new MessageDialog("该教师不存在！", "提示");
+                    await AboutDialog.ShowAsync();
+                }
+            }
+            else
+            {
+                MessageDialog AboutDialog = new MessageDialog("请输入待查询教师的工号！", "提示");
+                await AboutDialog.ShowAsync();
+            }
+        }
+
+        private void TClear2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            TnameTB2.Text = "";
+            JobTitleTB2.Text = "";
+            SalaryTB2.Text = "";
+        }
+
+        private async void UpdateDialog2_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            if (TnameTB2.Text != "" && TnoTB2.Text != "" && JobTitleTB2.Text != "" && SalaryTB2.Text != "")
+            {
+                conn.Execute("update Teacher set Tname = ? where Tno = ?", TnameTB2.Text, TnoTB2.Text.Substring(3));
+                conn.Execute("update Teacher set JobTitle = ? where Tno = ?", JobTitleTB2.Text, TnoTB2.Text.Substring(3));
+                conn.Execute("update Teacher set Salary = ? where Tno = ?", SalaryTB2.Text, TnoTB2.Text.Substring(3));
+                PopupNotice popupNotice = new PopupNotice("修改成功");
+                popupNotice.ShowAPopup();
+                RefreshTeaList();
+            }
+            else
+            {
+                MessageDialog AboutDialog = new MessageDialog("请将信息填写完整！", "提示");
+                await AboutDialog.ShowAsync();
+            }
         }
     }
 }
