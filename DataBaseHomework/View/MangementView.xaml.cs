@@ -35,15 +35,17 @@ namespace DataBaseHomework.View
         SQLiteConnection conn;
         public StudentDataViewModel StuViewModel = new StudentDataViewModel();
         public TeacherDataViewModel TeaViewModel = new TeacherDataViewModel();
+        public CourseDataViewModel CouViewModel = new CourseDataViewModel();
         private string _sex;
         private static StudentData StudentItem;
         private static TeacherData TeacherItem;
+        private static CourseData CourseItem;
         public ManagementView()
         {
             this.InitializeComponent();
             conn = new SQLiteConnection(new SQLitePlatformWinRT(), path);
             AddStudent.Background = new SolidColorBrush(Color.FromArgb(255, 81, 196, 211));
-            if (StuList.IsChecked == false && TeaList.IsChecked == false)
+            if (StuList.IsChecked == false && TeaList.IsChecked == false&&CouList.IsChecked==false)
                 StuList.IsChecked = true;
         }
 
@@ -80,6 +82,22 @@ namespace DataBaseHomework.View
                 }
             }
         }
+        private void RefreshCouList()
+        {
+            CouViewModel.CourseDatas.Clear();
+            List<Course> datalist = conn.Query<Course>("select * from Course");
+            foreach (var item in datalist)
+            {
+                try
+                {
+                    CouViewModel.CourseDatas.Add(new CourseData() { Cname = "课程名：" + item.Cname, Cno = "课程号：" + item.Cno, Tno = "任课教师工号："+item.Tno, Credit = "学分：" + item.Credit });
+                }
+                catch (ArgumentNullException ex)
+                {
+                    throw ex;
+                }
+            }
+        }
         private async void AddStudent_Click(object sender, RoutedEventArgs e)
         {
             await AddDialog.ShowAsync();
@@ -91,10 +109,6 @@ namespace DataBaseHomework.View
             await QueryDialog.ShowAsync();
         }
 
-        private void QueryAll_Click(object sender, RoutedEventArgs e)
-        {
-            
-        }
 
         private async void AddDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
@@ -184,13 +198,9 @@ namespace DataBaseHomework.View
             QueryDialog.Hide();
         }
 
-        private void QueryAllTeacher_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void QueryAllStudent_Click(object sender, RoutedEventArgs e)
         {
+            StuList.IsChecked = true;
             RefreshStuList();
         }
 
@@ -216,6 +226,7 @@ namespace DataBaseHomework.View
 
         private void QueryAllTeacher_Click_1(object sender, RoutedEventArgs e)
         {
+            TeaList.IsChecked = true;
             RefreshTeaList();
         }
 
@@ -223,12 +234,14 @@ namespace DataBaseHomework.View
         {
             StudentBorder.Visibility = Visibility.Visible;
             TeacherBorder.Visibility = Visibility.Collapsed;
+            CourseBorder.Visibility = Visibility.Collapsed;
         }
 
         private void TeaList_Checked(object sender, RoutedEventArgs e)
         {
             StudentBorder.Visibility = Visibility.Collapsed;
             TeacherBorder.Visibility = Visibility.Visible;
+            CourseBorder.Visibility = Visibility.Collapsed;
         }
 
         private void ListView_RightTapped(object sender, RightTappedRoutedEventArgs e)
@@ -272,7 +285,6 @@ namespace DataBaseHomework.View
                 MessageDialog AboutDialog = new MessageDialog("请将信息填写完整！", "提示");
                 await AboutDialog.ShowAsync();
             }
-
         }
 
         private void Clear2Btn_Click(object sender, RoutedEventArgs e)
@@ -416,6 +428,166 @@ namespace DataBaseHomework.View
                 MessageDialog AboutDialog = new MessageDialog("请将信息填写完整！", "提示");
                 await AboutDialog.ShowAsync();
             }
+        }
+
+        private async void AddCourse_Click(object sender, RoutedEventArgs e)
+        {
+            await AddDialog3.ShowAsync();
+        }
+
+        private async void QueryCourse_Click(object sender, RoutedEventArgs e)
+        {
+            await QueryDialog3.ShowAsync();
+        }
+
+        private void QueryAllCourse_Click(object sender, RoutedEventArgs e)
+        {
+            CouList.IsChecked = true;
+            RefreshCouList();
+        }
+
+        private void ClearCourseList_Click(object sender, RoutedEventArgs e)
+        {
+            CouViewModel.CourseDatas.Clear();
+        }
+
+        private async void Cupdate_Click(object sender, RoutedEventArgs e)
+        {
+            CnameTB2.Text = CourseItem.Cname.Substring(4);
+            CnoTB2.Text = CourseItem.Cno;
+            CreditTB2.Text = CourseItem.Credit.Substring(3);
+            CTnoTB2.Text = CourseItem.Tno.Substring(7);
+            await UpdateDialog3.ShowAsync();
+        }
+
+        private async void Cdelete_Click(object sender, RoutedEventArgs e)
+        {
+            await DeleteDialog3.ShowAsync();
+        }
+
+        private void CListView_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            var _item = (e.OriginalSource as FrameworkElement)?.DataContext as CourseData;
+            CourseItem = _item;
+        }
+
+        private void CouList_Checked(object sender, RoutedEventArgs e)
+        {
+            StudentBorder.Visibility = Visibility.Collapsed;
+            TeacherBorder.Visibility = Visibility.Collapsed;
+            CourseBorder.Visibility = Visibility.Visible;
+        }
+
+        private async void AddDialog3_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            try
+            {
+                if (CnoTB.Text != "" && CnameTB.Text != "" && CreditTB.Text != "")
+                {
+                    conn.Insert(new Course() { Cname = CnameTB.Text, Cno = CnoTB.Text,Tno = CTnoTB.Text, Credit = Convert.ToDouble(CreditTB.Text)});
+                    PopupNotice popupNotice = new PopupNotice("添加成功");
+                    popupNotice.ShowAPopup();
+                    RefreshCouList();
+                }
+                else
+                {
+                    MessageDialog AboutDialog = new MessageDialog("请将信息填写完整！", "提示");
+                    await AboutDialog.ShowAsync();
+                }
+            }
+            catch(SQLiteException)
+            {
+                MessageDialog AboutDialog = new MessageDialog("违反了约束条件！", "提示");
+                await AboutDialog.ShowAsync();
+            }
+            catch (FormatException)
+            {
+                MessageDialog AboutDialog = new MessageDialog("信息格式出现错误！", "提示");
+                await AboutDialog.ShowAsync();
+            }
+        }
+
+        private void CCloseBtn_Click(object sender, RoutedEventArgs e)
+        {
+            DeleteDialog3.Hide();
+        }
+
+        private void DeleteBtn3_Click(object sender, RoutedEventArgs e)
+        {
+            conn.Execute("delete from Course where Cno = ?", CourseItem.Cno.Substring(4));
+            CouViewModel.CourseDatas.Remove(CourseItem);
+            DeleteDialog3.Hide();
+            PopupNotice popupNotice = new PopupNotice("删除成功");
+            popupNotice.ShowAPopup();
+        }
+
+        private async void QueryBtn3_Click(object sender, RoutedEventArgs e)
+        {
+            if (QueryCno.Text != "")
+            {
+                var datalist = conn.Query<Course>("select *from Course where Cno = ?", QueryCno.Text);
+                if (datalist.Count != 0)
+                {
+                    CouViewModel.CourseDatas.Clear();
+                    foreach (var item in datalist)
+                    {
+                        CouViewModel.CourseDatas.Add(new CourseData() { Cname = "课程名：" + item.Cname, Cno = "课程号:" + item.Cno,Tno = "任课老师工号："+item.Tno, Credit = "学分：" + item.Credit });
+                    }
+                    QueryDialog3.Hide();
+                    PopupNotice popupNotice = new PopupNotice("查找成功");
+                    popupNotice.ShowAPopup();
+                }
+                else
+                {
+                    MessageDialog AboutDialog = new MessageDialog("该课程不存在！", "提示");
+                    await AboutDialog.ShowAsync();
+                }
+            }
+            else
+            {
+                MessageDialog AboutDialog = new MessageDialog("请输入待查询课程的课程号！", "提示");
+                await AboutDialog.ShowAsync();
+            }
+        }
+
+        private void CCloseBtn2_Click(object sender, RoutedEventArgs e)
+        {
+            QueryDialog3.Hide();
+        }
+
+        private async void UpdateDialog3_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            if (CnameTB2.Text != "" && CnoTB2.Text != ""&&CTnoTB2.Text!="" && CreditTB2.Text != "")
+            {
+                conn.Execute("update Course set Cname = ? where Cno = ?", CnameTB2.Text, CnoTB2.Text.Substring(4));
+                conn.Execute("update Course set Credit = ? where Cno = ?", CreditTB2.Text, CnoTB2.Text.Substring(4));
+                PopupNotice popupNotice = new PopupNotice("修改成功");
+                popupNotice.ShowAPopup();
+                RefreshCouList();
+            }
+            else
+            {
+                MessageDialog AboutDialog = new MessageDialog("请将信息填写完整！", "提示");
+                await AboutDialog.ShowAsync();
+            }
+        }
+
+        private void CClear2Btn_Click(object sender, RoutedEventArgs e)
+        {
+            CnameTB2.Text = "";
+            CreditTB2.Text = "";
+        }
+
+        private void CClearBtn_Click(object sender, RoutedEventArgs e)
+        {
+            CnameTB.Text = "";
+            CnoTB.Text = "";
+            CreditTB.Text = "";
+        }
+
+        private void CountBtn_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

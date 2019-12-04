@@ -1,4 +1,5 @@
 ﻿using SQLite.Net.Attributes;
+using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,10 @@ namespace DataBaseHomework.Models
 {
     class SC
     {
-        [PrimaryKey]
+        [ForeignKey(typeof(Student))]
         public string Sno { get; set; }
-        public string Tno { get; set; }
+        [ForeignKey(typeof(Course))]
         public string Cno { get; set; }
-        public double Grade { get; set; }
+        public double Score { get; set; }
     }
 }

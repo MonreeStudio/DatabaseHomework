@@ -1,4 +1,5 @@
 ﻿using SQLite.Net.Attributes;
+using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,7 @@ namespace DataBaseHomework.Models
         public string Cno { get; set; }
         public string Cname { get; set; }
         public double Credit { get; set; }
+        [ForeignKey(typeof(Teacher))]
+        public string Tno { get; set; }
     }
 }
