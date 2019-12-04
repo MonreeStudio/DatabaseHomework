@@ -587,8 +587,14 @@ namespace DataBaseHomework.View
 
         private async void CountBtn_Click(object sender, RoutedEventArgs e)
         {
-            //var pList = conn.Query<Teacher>("select AVG(Salary) from Teacher where JobTitle = ?","教授");
-            //pCount.Text = "数量：" + pList.Count();
+            var pList = conn.Query<Teacher>("select * from Teacher where JobTitle = ?","教授");
+            var pAverageSalary = conn.ExecuteScalar<double>("select AVG(Salary) from Teacher where JobTitle = ?", "教授");
+            pCount.Text = "数量：" + pList.Count();
+            pAvgSalary.Text = "平均薪资：" + pAverageSalary;
+            var apList = conn.Query<Teacher>("select *from Teacher where JobTitle = ?", "副教授");
+            apCount.Text = "数量：" + apList.Count();
+            var lList = conn.Query<Teacher>("select *from Teacher where JobTitle = ?", "讲师");
+            lCount.Text = "数量：" + lList.Count();
             await CountDialog.ShowAsync();
             
         }
