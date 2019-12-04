@@ -390,5 +390,25 @@
                 <Button x:Name="CClear2Btn" Background="{x:Bind AddStudent.Background}" Content="重置" Foreground="White" CornerRadius="8" Click="CClear2Btn_Click"  HorizontalAlignment="Center"/>
             </StackPanel>
         </ContentDialog>
+
+        <ContentDialog x:Name="CountDialog"
+                       Title="教师信息统计"
+                       Foreground="{x:Bind AddStudent.Background}"
+                       CloseButtonText="确认"
+                       BorderBrush="{x:Bind AddStudent.Background}"
+                       DefaultButton="Close">
+            <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <TextBlock Text="教授" Foreground="Black" FontSize="28"/>
+                <TextBlock x:Name="pCount" Text="数量：" Foreground="SlateGray" FontSize="18"/>
+                <TextBlock x:Name="pAvgSalary" Text="平均薪资：" Foreground="SlateGray" FontSize="18" Margin="0,0,0,10"/>
+                <TextBlock Text="副教授" Foreground="Black" FontSize="28"/>
+                <TextBlock x:Name="apCount" Text="数量：" Foreground="SlateGray" FontSize="18"/>
+                <TextBlock x:Name="apAvgSalary" Text="平均薪资：" Foreground="SlateGray" FontSize="18" Margin="0,0,0,10"/>
+                <TextBlock Text="讲师" Foreground="Black" FontSize="28"/>
+                <TextBlock x:Name="lCount" Text="数量：" Foreground="SlateGray" FontSize="18"/>
+                <TextBlock x:Name="lAvgSalary" Text="平均薪资：" Foreground="SlateGray" FontSize="18" Margin="0,0,0,10"/>
+            </StackPanel>
+            
+        </ContentDialog>
     </Grid>
 </Page>

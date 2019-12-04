@@ -585,9 +585,12 @@ namespace DataBaseHomework.View
             CreditTB.Text = "";
         }
 
-        private void CountBtn_Click(object sender, RoutedEventArgs e)
+        private async void CountBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            //var pList = conn.Query<Teacher>("select AVG(Salary) from Teacher where JobTitle = ?","教授");
+            //pCount.Text = "数量：" + pList.Count();
+            await CountDialog.ShowAsync();
+            
         }
     }
 }
