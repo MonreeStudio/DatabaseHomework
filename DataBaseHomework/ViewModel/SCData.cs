@@ -16,7 +16,7 @@ namespace DataBaseHomework.ViewModel
 
     public class SCDataViewModel
     {
-        public ObservableCollection<SCData> StudentDatas = new ObservableCollection<SCData>();
+        public ObservableCollection<SCData> SCDatas = new ObservableCollection<SCData>();
         public SCDataViewModel()
         {
 

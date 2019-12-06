@@ -26,9 +26,12 @@ namespace DataBaseHomework.View
     public sealed partial class Login : Page
     {
         ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+        public static Login Current;
         public Login()
         {
             this.InitializeComponent();
+            NavigationCacheMode = NavigationCacheMode.Enabled;
+            Current = this;
             LoginGrid.Background = ColorfulBrush(Color.FromArgb(255,81,196,211), 0.8);
             LoginBtn.Foreground = new SolidColorBrush(Color.FromArgb(255, 81, 196, 211));
         }
@@ -59,7 +62,7 @@ namespace DataBaseHomework.View
             if(StuBtn.IsChecked==true)
             {
                 localSettings.Values["Sno"] = "1706300005";
-                localSettings.Values["StuPassword"] = "19081908";
+                localSettings.Values["StuPassword"] = "08561X";
                 if (localSettings.Values["Sno"].ToString().Equals(UserName.Text) && localSettings.Values["StuPassword"].Equals(UserPassword.Password))
                 {
                     MainPage.Current.MyFrame.Navigate(typeof(StudentView));

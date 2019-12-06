@@ -13,7 +13,7 @@ namespace DataBaseHomework.Models
         [PrimaryKey]
         public string Cno { get; set; }
         public string Cname { get; set; }
-        public double Credit { get; set; }
+        public double? Credit { get; set; }
         [ForeignKey(typeof(Teacher))]
         public string Tno { get; set; }
     }

@@ -9,6 +9,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -33,8 +34,22 @@ namespace DataBaseHomework.View
             this.InitializeComponent();
             //建立数据库连接   
             conn = new SQLiteConnection(new SQLitePlatformWinRT(), path);
-            //建表              
-            
+            //建表         
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            SnoTB.Foreground = new SolidColorBrush(Color.FromArgb(255, 81, 196, 211));
+            var datalist = conn.Query<Student>("select *from Student where Sno = ?", Login.Current.UserName.Text);
+            var _uername = conn.ExecuteScalar<string>("select Sname from Student where Sno = ?", Login.Current.UserName.Text);
+            HelloTB.Text = _uername + "，你好。";
+            foreach(var item in datalist)
+            {
+                SnoTB.Text = "学号：" + item.Sno;
+                SexTB.Text = "性别：" + item.Sex;
+                AgeTB.Text = "年龄：" + item.Age;
+            }
         }
     }
 }

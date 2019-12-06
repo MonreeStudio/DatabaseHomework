@@ -36,16 +36,18 @@ namespace DataBaseHomework.View
         public StudentDataViewModel StuViewModel = new StudentDataViewModel();
         public TeacherDataViewModel TeaViewModel = new TeacherDataViewModel();
         public CourseDataViewModel CouViewModel = new CourseDataViewModel();
+        public SCDataViewModel SCViewModel = new SCDataViewModel();
         private string _sex;
         private static StudentData StudentItem;
         private static TeacherData TeacherItem;
         private static CourseData CourseItem;
+        private static SCData SCItem;
         public ManagementView()
         {
             this.InitializeComponent();
             conn = new SQLiteConnection(new SQLitePlatformWinRT(), path);
             AddStudent.Background = new SolidColorBrush(Color.FromArgb(255, 81, 196, 211));
-            if (StuList.IsChecked == false && TeaList.IsChecked == false&&CouList.IsChecked==false)
+            if (StuList.IsChecked == false && TeaList.IsChecked == false && CouList.IsChecked == false && SCList.IsChecked == false)
                 StuList.IsChecked = true;
         }
 
@@ -90,7 +92,7 @@ namespace DataBaseHomework.View
             {
                 try
                 {
-                    CouViewModel.CourseDatas.Add(new CourseData() { Cname = "课程名：" + item.Cname, Cno = "课程号：" + item.Cno, Tno = "任课教师工号："+item.Tno, Credit = "学分：" + item.Credit });
+                    CouViewModel.CourseDatas.Add(new CourseData() { Cname = "课程名：" + item.Cname, Cno = "课程号：" + item.Cno, Tno = "任课教师工号：" + item.Tno, Credit = "学分：" + item.Credit });
                 }
                 catch (ArgumentNullException ex)
                 {
@@ -114,7 +116,7 @@ namespace DataBaseHomework.View
         {
             try
             {
-                if (SnameTB.Text != "" && SnoTB.Text != "" && _sex != "" && AgeTB.Text != ""&&Spassword.Text!="")
+                if (SnameTB.Text != "" && SnoTB.Text != "" && _sex != "" && AgeTB.Text != "" && Spassword.Text != "")
                 {
                     conn.Insert(new Student() { Sname = SnameTB.Text, Sno = SnoTB.Text, Sex = _sex, Age = Convert.ToInt32(AgeTB.Text), Password = Spassword.Text });
                     PopupNotice popupNotice = new PopupNotice("添加成功");
@@ -136,7 +138,7 @@ namespace DataBaseHomework.View
 
         private void SexTB_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if(SexTB.SelectedItem!=null)
+            if (SexTB.SelectedItem != null)
                 _sex = SexTB.SelectedItem.ToString();
         }
 
@@ -166,13 +168,13 @@ namespace DataBaseHomework.View
 
         private async void QueryBtn_Click(object sender, RoutedEventArgs e)
         {
-            if(QuerySno.Text!="")
+            if (QuerySno.Text != "")
             {
                 var datalist = conn.Query<Student>("select *from Student where Sno = ?", QuerySno.Text);
                 if (datalist.Count != 0)
                 {
                     StuViewModel.StudentDatas.Clear();
-                    foreach(var item in datalist)
+                    foreach (var item in datalist)
                     {
                         StuViewModel.StudentDatas.Add(new StudentData() { Sname = "姓名：" + item.Sname, Sno = "学号:" + item.Sno, Sex = "性别：" + item.Sex, Age = "年龄：" + item.Age.ToString(), Password = "密码：" + item.Password });
                     }
@@ -235,6 +237,7 @@ namespace DataBaseHomework.View
             StudentBorder.Visibility = Visibility.Visible;
             TeacherBorder.Visibility = Visibility.Collapsed;
             CourseBorder.Visibility = Visibility.Collapsed;
+            SCBorder.Visibility = Visibility.Collapsed;
         }
 
         private void TeaList_Checked(object sender, RoutedEventArgs e)
@@ -242,6 +245,7 @@ namespace DataBaseHomework.View
             StudentBorder.Visibility = Visibility.Collapsed;
             TeacherBorder.Visibility = Visibility.Visible;
             CourseBorder.Visibility = Visibility.Collapsed;
+            SCBorder.Visibility = Visibility.Collapsed;
         }
 
         private void ListView_RightTapped(object sender, RightTappedRoutedEventArgs e)
@@ -265,12 +269,12 @@ namespace DataBaseHomework.View
                 SexTB2.SelectedIndex = 1;
             AgeTB2.Text = StudentItem.Age.Substring(3);
             Spassword2.Text = StudentItem.Password.Substring(3);
-            await UpdateDialog.ShowAsync();    
+            await UpdateDialog.ShowAsync();
         }
 
         private async void UpdateDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if(SnameTB2.Text!=""&&SnoTB2.Text!=""&&SexTB2!=null&&AgeTB2.Text!=""&&Spassword2.Text!="")
+            if (SnameTB2.Text != "" && SnoTB2.Text != "" && SexTB2 != null && AgeTB2.Text != "" && Spassword2.Text != "")
             {
                 conn.Execute("update Student set Sname = ? where Sno = ?", SnameTB2.Text, SnoTB2.Text.Substring(3));
                 conn.Execute("update Student set Sex = ? where Sno = ?", SexTB2.SelectedItem.ToString(), SnoTB2.Text.Substring(3));
@@ -320,7 +324,7 @@ namespace DataBaseHomework.View
                     await AboutDialog.ShowAsync();
                 }
             }
-            catch(FormatException)
+            catch (FormatException)
             {
                 MessageDialog AboutDialog = new MessageDialog("信息格式出现错误！", "提示");
                 await AboutDialog.ShowAsync();
@@ -476,6 +480,7 @@ namespace DataBaseHomework.View
             StudentBorder.Visibility = Visibility.Collapsed;
             TeacherBorder.Visibility = Visibility.Collapsed;
             CourseBorder.Visibility = Visibility.Visible;
+            SCBorder.Visibility = Visibility.Collapsed;
         }
 
         private async void AddDialog3_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -484,7 +489,7 @@ namespace DataBaseHomework.View
             {
                 if (CnoTB.Text != "" && CnameTB.Text != "" && CreditTB.Text != "")
                 {
-                    conn.Insert(new Course() { Cname = CnameTB.Text, Cno = CnoTB.Text,Tno = CTnoTB.Text, Credit = Convert.ToDouble(CreditTB.Text)});
+                    conn.Insert(new Course() { Cname = CnameTB.Text, Cno = CnoTB.Text, Tno = CTnoTB.Text, Credit = Convert.ToDouble(CreditTB.Text) });
                     PopupNotice popupNotice = new PopupNotice("添加成功");
                     popupNotice.ShowAPopup();
                     RefreshCouList();
@@ -495,7 +500,7 @@ namespace DataBaseHomework.View
                     await AboutDialog.ShowAsync();
                 }
             }
-            catch(SQLiteException)
+            catch (SQLiteException)
             {
                 MessageDialog AboutDialog = new MessageDialog("违反了约束条件！", "提示");
                 await AboutDialog.ShowAsync();
@@ -531,7 +536,7 @@ namespace DataBaseHomework.View
                     CouViewModel.CourseDatas.Clear();
                     foreach (var item in datalist)
                     {
-                        CouViewModel.CourseDatas.Add(new CourseData() { Cname = "课程名：" + item.Cname, Cno = "课程号:" + item.Cno,Tno = "任课老师工号："+item.Tno, Credit = "学分：" + item.Credit });
+                        CouViewModel.CourseDatas.Add(new CourseData() { Cname = "课程名：" + item.Cname, Cno = "课程号:" + item.Cno, Tno = "任课老师工号：" + item.Tno, Credit = "学分：" + item.Credit });
                     }
                     QueryDialog3.Hide();
                     PopupNotice popupNotice = new PopupNotice("查找成功");
@@ -557,7 +562,7 @@ namespace DataBaseHomework.View
 
         private async void UpdateDialog3_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if (CnameTB2.Text != "" && CnoTB2.Text != ""&&CTnoTB2.Text!="" && CreditTB2.Text != "")
+            if (CnameTB2.Text != "" && CnoTB2.Text != "" && CTnoTB2.Text != "" && CreditTB2.Text != "")
             {
                 conn.Execute("update Course set Cname = ? where Cno = ?", CnameTB2.Text, CnoTB2.Text.Substring(4));
                 conn.Execute("update Course set Credit = ? where Cno = ?", CreditTB2.Text, CnoTB2.Text.Substring(4));
@@ -598,8 +603,171 @@ namespace DataBaseHomework.View
             var lList = conn.Query<Teacher>("select *from Teacher where JobTitle = ?", "讲师");
             lCount.Text = "数量：" + lList.Count();
             var lAverageSalary = conn.ExecuteScalar<double>("select AVG(Salary) from Teacher where JobTitle = ?", "讲师");
-            lAvgSalary.Text = "平均薪资" + lAverageSalary;
+            lAvgSalary.Text = "平均薪资：" + lAverageSalary;
             await CountDialog.ShowAsync();
+        }
+
+        private async void AddSC_Click(object sender, RoutedEventArgs e)
+        {
+            await AddDialog4.ShowAsync();
+        }
+
+        private async void QuerySingleStudent_Click(object sender, RoutedEventArgs e)
+        {
+            await QueryDialog4.ShowAsync();
+        }
+
+        private async void AddDialog4_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            try
+            {
+                if (SCSnoTB.Text != "" && SCCnoTB.Text != "" && ScoreTB.Text != "")
+                {
+                    conn.Insert(new SC() { Sno = SCSnoTB.Text, Cno = SCCnoTB.Text, Score = Convert.ToDouble(ScoreTB.Text) });
+                    PopupNotice popupNotice = new PopupNotice("添加成功");
+                    popupNotice.ShowAPopup();
+                }
+                else
+                {
+                    MessageDialog AboutDialog = new MessageDialog("请将信息填写完整！", "提示");
+                    await AboutDialog.ShowAsync();
+                }
+            }
+            catch (SQLiteException)
+            {
+                MessageDialog AboutDialog = new MessageDialog("违反了约束条件！", "提示");
+                await AboutDialog.ShowAsync();
+            }
+            catch (FormatException)
+            {
+                MessageDialog AboutDialog = new MessageDialog("信息格式出现错误！", "提示");
+                await AboutDialog.ShowAsync();
+            }
+        }
+
+        private async void QuerySingleProject_Click(object sender, RoutedEventArgs e)
+        {
+            await CountDialog2.ShowAsync();
+        }
+
+        private void QuerySingleScoreBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (QueryCno2.Text != "")
+            {
+                var QueryCname = conn.ExecuteScalar<string>("select Cname from Course where Cno = (select Cno from SC where Cno = ?) ", QueryCno2.Text);
+                CourseName.Text = "课程名：" + QueryCname;
+                var _Avg = conn.ExecuteScalar<double>("select AVG(Score) from SC where Cno = ?", QueryCno2.Text);
+                Avg.Text = "平均分：" + _Avg;
+                var _Max = conn.ExecuteScalar<double>("select MAX(Score) from SC where Cno = ?", QueryCno2.Text);
+                Max.Text = "最高分：" + _Max;
+                var _Min = conn.ExecuteScalar<double>("select MIN(Score) from SC where Cno = ?", QueryCno2.Text);
+                Min.Text = "最低分：" + _Min;
+            }
+        }
+
+        private async void UpdateDialog4_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            if (SCScoreTB3.Text != "")
+            {
+                conn.Execute("update SC set Score = ? where Sno = ? and Cno = ?",SCScoreTB3.Text, SCSnoTB3.Text.Substring(3), SCCnoTB3.Text.Substring(4));
+                PopupNotice popupNotice = new PopupNotice("修改成功");
+                popupNotice.ShowAPopup();
+                SCViewModel.SCDatas.Clear();
+                SCViewModel.SCDatas.Add(new SCData() { Sno = SCSnoTB3.Text, Cno = SCCnoTB3.Text, Score = "成绩：" + SCScoreTB3.Text });
+            }
+            else
+            {
+                MessageDialog AboutDialog = new MessageDialog("请将信息填写完整！", "提示");
+                await AboutDialog.ShowAsync();
+            }
+        }
+
+        private void SCList_Checked(object sender, RoutedEventArgs e)
+        {
+            StudentBorder.Visibility = Visibility.Collapsed;
+            CourseBorder.Visibility = Visibility.Collapsed;
+            TeacherBorder.Visibility = Visibility.Collapsed;
+            SCBorder.Visibility = Visibility.Visible;
+        }
+
+        private async void SCupdate_Click(object sender, RoutedEventArgs e)
+        {
+            var _courseName = conn.ExecuteScalar<string>("select Cname from Course where Cno = (select Cno from SC where Cno = ?)", SCItem.Cno.Substring(4));
+            SCCNameTB3.Text = _courseName;
+            SCSnoTB3.Text = SCItem.Sno;
+            SCCnoTB3.Text = SCItem.Cno;
+            SCScoreTB3.Text = SCItem.Score.Substring(3);
+            await UpdateDialog4.ShowAsync();
+        }
+
+        private async void SCdelete_Click(object sender, RoutedEventArgs e)
+        {
+            await DeleteDialog4.ShowAsync();
+        }
+
+        private void SCListView_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            var _item = (e.OriginalSource as FrameworkElement)?.DataContext as SCData;
+            SCItem = _item;
+        }
+
+        private void ClearSCList_Click(object sender, RoutedEventArgs e)
+        {
+            SCViewModel.SCDatas.Clear();
+        }
+
+        private async void QueryBtn4_Click(object sender, RoutedEventArgs e)
+        {
+            if (QuerySCSno.Text != "" && QuerySCCno.Text != "")
+            {
+                var datalist = conn.Query<SC>("select *from SC where Sno = ? and Cno = ?", QuerySCSno.Text, QuerySCCno.Text);
+                if (datalist.Count != 0)
+                {
+                    SCViewModel.SCDatas.Clear();
+                    foreach (var item in datalist)
+                    {
+                        SCViewModel.SCDatas.Add(new SCData() { Sno = "学号：" + item.Sno, Cno = "课程号：" + item.Cno, Score = "成绩：" + item.Score });
+                    }
+                    QueryDialog4.Hide();
+                    PopupNotice popupNotice = new PopupNotice("查找成功");
+                    popupNotice.ShowAPopup();
+                    SCList.IsChecked = true;
+                }
+                else
+                {
+                    MessageDialog AboutDialog = new MessageDialog("未找到成绩！", "提示");
+                    await AboutDialog.ShowAsync();
+                }
+            }
+            else
+            {
+                MessageDialog AboutDialog = new MessageDialog("请输入待查询学生的学号！", "提示");
+                await AboutDialog.ShowAsync();
+            }
+        }
+
+        private void SCCloseBtn_Click(object sender, RoutedEventArgs e)
+        {
+            QueryDialog4.Hide();
+        }
+
+        private void DeleteBtn4_Click(object sender, RoutedEventArgs e)
+        {
+            conn.Execute("delete from SC where Sno = ? and Cno = ?", SCItem.Sno.Substring(3),SCItem.Cno.Substring(4));
+            SCViewModel.SCDatas.Remove(SCItem);
+            DeleteDialog4.Hide();
+            PopupNotice popupNotice = new PopupNotice("删除成功");
+            popupNotice.ShowAPopup();
+        }
+
+        private void SCCloseBtn_Click_1(object sender, RoutedEventArgs e)
+        {
+            DeleteDialog4.Hide();
+        }
+
+        private void SCCloseBtn2_Click(object sender, RoutedEventArgs e)
+        {
+            QueryDialog4.Hide();
         }
     }
 }
