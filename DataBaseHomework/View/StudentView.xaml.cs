@@ -1,6 +1,5 @@
 ﻿using DataBaseHomework.Models;
-using SQLite.Net;
-using SQLite.Net.Platform.WinRT;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -33,7 +32,7 @@ namespace DataBaseHomework.View
         {
             this.InitializeComponent();
             //建立数据库连接   
-            conn = new SQLiteConnection(new SQLitePlatformWinRT(), path);
+            conn = new SQLiteConnection(path);
             //建表         
             Initialize();
         }

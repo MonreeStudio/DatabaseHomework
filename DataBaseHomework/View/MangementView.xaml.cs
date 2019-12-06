@@ -1,7 +1,6 @@
 ﻿using DataBaseHomework.Models;
 using DataBaseHomework.ViewModel;
-using SQLite.Net;
-using SQLite.Net.Platform.WinRT;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -45,7 +44,7 @@ namespace DataBaseHomework.View
         public ManagementView()
         {
             this.InitializeComponent();
-            conn = new SQLiteConnection(new SQLitePlatformWinRT(), path);
+            conn = new SQLiteConnection(path);
             AddStudent.Background = new SolidColorBrush(Color.FromArgb(255, 81, 196, 211));
             if (StuList.IsChecked == false && TeaList.IsChecked == false && CouList.IsChecked == false && SCList.IsChecked == false)
                 StuList.IsChecked = true;
