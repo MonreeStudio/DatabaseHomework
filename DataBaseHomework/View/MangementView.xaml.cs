@@ -1,6 +1,7 @@
 ﻿using DataBaseHomework.Models;
 using DataBaseHomework.ViewModel;
 using SQLite;
+using SQLiteNetExtensions.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -86,7 +87,8 @@ namespace DataBaseHomework.View
         private void RefreshCouList()
         {
             CouViewModel.CourseDatas.Clear();
-            List<Course> datalist = conn.Query<Course>("select * from Course");
+            // List<Course> datalist = conn.Query<Course>("select * from Course");
+            List<Course> datalist = conn.GetAllWithChildren<Course>();
             foreach (var item in datalist)
             {
                 try
@@ -362,7 +364,13 @@ namespace DataBaseHomework.View
 
         private void DeleteBtn2_Click(object sender, RoutedEventArgs e)
         {
-            conn.Execute("delete from Teacher where Tno = ?", TeacherItem.Tno.Substring(3));
+            // 手动SQL版（不能级联删除）
+            // conn.Execute("delete from Teacher where Tno = ?", TeacherItem.Tno.Substring(3));
+
+            // ORM版
+            var teacher = conn.GetWithChildren<Teacher>(TeacherItem.Tno.Substring(3));
+            conn.Delete(teacher, recursive: true);
+
             TeaViewModel.TeacherDatas.Remove(TeacherItem);
             DeleteDialog2.Hide();
             PopupNotice popupNotice = new PopupNotice("删除成功");
@@ -488,10 +496,19 @@ namespace DataBaseHomework.View
             {
                 if (CnoTB.Text != "" && CnameTB.Text != "" && CreditTB.Text != "")
                 {
-                    conn.Insert(new Course() { Cname = CnameTB.Text, Cno = CnoTB.Text, Tno = CTnoTB.Text, Credit = Convert.ToDouble(CreditTB.Text) });
-                    PopupNotice popupNotice = new PopupNotice("添加成功");
-                    popupNotice.ShowAPopup();
-                    RefreshCouList();
+                    var teacher = conn.Find<Teacher>(CTnoTB.Text);
+                    if (teacher != null)
+                    {
+                        var course = new Course() { Cname = CnameTB.Text, Cno = CnoTB.Text, Credit = Convert.ToDouble(CreditTB.Text), Teacher = teacher };
+                        conn.InsertWithChildren(course);
+                        PopupNotice popupNotice = new PopupNotice("添加成功");
+                        popupNotice.ShowAPopup();
+                        RefreshCouList();
+                    }
+                    else
+                    {
+                        throw SQLiteException.New(SQLite3.Result.Error, "教师不存，课之焉附？");
+                    }
                 }
                 else
                 {
