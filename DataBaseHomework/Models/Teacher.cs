@@ -1,4 +1,5 @@
 ﻿using SQLite;
+using SQLiteNetExtensions.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,7 @@ namespace DataBaseHomework.Models
         public string Tname { get; set; }
         public string JobTitle { get; set; }
         public double Salary { get; set; }
+        [OneToMany(CascadeOperations = CascadeOperation.All)]
+        public List<Course> TeachCourses { get; set; }
     }
 }

@@ -16,5 +16,8 @@ namespace DataBaseHomework.Models
         public double? Credit { get; set; }
         [ForeignKey(typeof(Teacher))]
         public string Tno { get; set; }
+
+        [ManyToOne]
+        public Teacher Teacher { get; set; }
     }
 }
