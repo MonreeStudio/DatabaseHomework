@@ -609,17 +609,48 @@ namespace DataBaseHomework.View
         private async void CountBtn_Click(object sender, RoutedEventArgs e)
         {
             var pList = conn.Query<Teacher>("select * from Teacher where JobTitle = ?", "教授");
-            pCount.Text = "数量：" + pList.Count();
-            var pAverageSalary = conn.ExecuteScalar<double>("select AVG(Salary) from Teacher where JobTitle = ?", "教授");
-            pAvgSalary.Text = "平均薪资：" + pAverageSalary;
+            if (pList != null)
+            {
+                pCount.Text = "数量：" + pList.Count();
+                try
+                {
+                    var pAverageSalary = conn.ExecuteScalar<double>("select AVG(Salary) from Teacher where JobTitle = ?", "教授");
+                    pAvgSalary.Text = "平均薪资：" + pAverageSalary;
+                }
+                catch
+                {
+                    pAvgSalary.Text = "平均薪资：0";
+                }
+            }
+            
             var apList = conn.Query<Teacher>("select *from Teacher where JobTitle = ?", "副教授");
-            apCount.Text = "数量：" + apList.Count();
-            var apAverageSalary = conn.ExecuteScalar<double>("select AVG(Salary) from Teacher where JobTitle = ?", "副教授");
-            apAvgSalary.Text = "平均薪资：" + apAverageSalary;
+            if (apList != null)
+            {
+                apCount.Text = "数量：" + apList.Count();
+                try
+                {
+                    var apAverageSalary = conn.ExecuteScalar<double>("select AVG(Salary) from Teacher where JobTitle = ?", "副教授");
+                    apAvgSalary.Text = "平均薪资：" + apAverageSalary;
+                }
+                catch
+                {
+                    apAvgSalary.Text = "平均薪资：0";
+                }
+            }
             var lList = conn.Query<Teacher>("select *from Teacher where JobTitle = ?", "讲师");
-            lCount.Text = "数量：" + lList.Count();
-            var lAverageSalary = conn.ExecuteScalar<double>("select AVG(Salary) from Teacher where JobTitle = ?", "讲师");
-            lAvgSalary.Text = "平均薪资：" + lAverageSalary;
+            if(lList!=null)
+            {
+                lCount.Text = "数量：" + lList.Count();
+                try
+                {
+                    var lAverageSalary = conn.ExecuteScalar<double>("select AVG(Salary) from Teacher where JobTitle = ?", "讲师");
+                    lAvgSalary.Text = "平均薪资：" + lAverageSalary;
+                }
+                catch
+                {
+                    lAvgSalary.Text = "平均薪资：0";
+                }
+            }
             await CountDialog.ShowAsync();
         }
 

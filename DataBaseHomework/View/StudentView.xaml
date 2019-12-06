@@ -31,17 +31,19 @@
                         <TextBlock x:Name="SnoTB" Text="学号：" FontSize="28"/>
                         <TextBlock x:Name="SexTB" Text="性别：" FontSize="28" Foreground="{x:Bind SnoTB.Foreground}"/>
                         <TextBlock x:Name="AgeTB" Text="年龄：" FontSize="28" Foreground="{x:Bind SnoTB.Foreground}"/>
+                        <TextBlock x:Name="TotalCreditTB" Text="总学分：" FontSize="28" Foreground="{x:Bind SnoTB.Foreground}"/>
                     </StackPanel>
                 </controls:DropShadowPanel>
             </Border>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
             <Button x:Name="ShowCourseListBtn" Content="查看选课列表" CornerRadius="15" Margin="10" Background="{x:Bind SnoTB.Foreground}" Foreground="White" Click="ShowCourseListBtn_Click"/>
-            <Button x:Name="UpdateInfoBtn" Content="修改个人信息" CornerRadius="15" Foreground="White" Background="{x:Bind SnoTB.Foreground}" Margin="10"/>
-            <Button x:Name="UpdatePasswordBtn" Content="修改密码" CornerRadius="15" Foreground="White" Background="{x:Bind SnoTB.Foreground}" Margin="10"/>
+            <Button x:Name="ShowMyCourseListBtn" Content="我的课程" CornerRadius="15" Margin="10" Background="{x:Bind SnoTB.Foreground}" Foreground="White" Click="ShowMyCourseListBtn_Click"/>
+            <Button x:Name="UpdateInfoBtn" Content="修改个人信息" CornerRadius="15" Foreground="White" Background="{x:Bind SnoTB.Foreground}" Margin="10" Click="UpdateInfoBtn_Click"/>
+            <Button x:Name="UpdatePasswordBtn" Content="修改密码" CornerRadius="15" Foreground="White" Background="{x:Bind SnoTB.Foreground}" Margin="10" Click="UpdatePasswordBtn_Click"/>
         </StackPanel>
         <Border x:Name="CourseBorder" Visibility="Visible" Grid.Row="3" Grid.ColumnSpan="2" Margin="20" BorderBrush="{x:Bind SnoTB.Foreground}" BorderThickness="3" CornerRadius="10">
-            <ListView ItemsSource="{x:Bind CouViewModel.CourseDatas}" ItemClick="ListView_ItemClick">
+            <ListView ItemsSource="{x:Bind CouViewModel.CourseDatas}" IsItemClickEnabled="True" ItemClick="ListView_ItemClick">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="Padding" Value="0" />
@@ -51,14 +53,94 @@
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="local1:CourseData">
                         <StackPanel Orientation="Horizontal" >
-                            <TextBlock Text="{x:Bind Cname}" Width="200" FontSize="23" Margin="10,10,50,10"/>
+                            <TextBlock Text="{x:Bind Cname}" Width="500" FontSize="23" Margin="10,10,50,10"/>
                             <TextBlock Text="{x:Bind Cno}" Width="200" FontSize="23" Margin="10,10,50,10"/>
-                            <TextBlock Text="{x:Bind Tno}" FontSize="23" Margin="10,10,50,10"/>
+                            <TextBlock Text="{x:Bind Tno}" Width="250" FontSize="23" Margin="10,10,50,10"/>
                             <TextBlock Text="{x:Bind Credit}" FontSize="23" Margin="10,10,50,10"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
         </Border>
+        <Border x:Name="MyCourseBorder" Visibility="Collapsed" Grid.Row="3" Grid.ColumnSpan="2" Margin="20" BorderBrush="{x:Bind SnoTB.Foreground}" BorderThickness="3" CornerRadius="10">
+            <ListView x:Name="MyCourseList" ItemsSource="{x:Bind CouViewModel.CourseDatas}" IsItemClickEnabled="True" ItemClick="MyCourseList_ItemClick">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local1:CourseData">
+                        <StackPanel Orientation="Horizontal" >
+                            <TextBlock Text="{x:Bind Cname}" Width="500" FontSize="23" Margin="10,10,50,10"/>
+                            <TextBlock Text="{x:Bind Cno}" Width="200" FontSize="23" Margin="10,10,50,10"/>
+                            <TextBlock Text="{x:Bind Tno}" Width="250" FontSize="23" Margin="10,10,50,10"/>
+                            <TextBlock Text="{x:Bind Credit}" FontSize="23" Margin="10,10,50,10"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Border>
+        
+        <ContentDialog x:Name="ChooseCourseDialog"
+                       Title="选课"
+                       Foreground="{x:Bind SnoTB.Foreground}"
+                       CloseButtonText="退出"
+                       BorderBrush="{x:Bind SnoTB.Foreground}"
+                       DefaultButton="Close">
+            <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <TextBlock x:Name="CnameTB" Text="课程名：" Foreground="DarkSlateGray" FontSize="20" Margin="10"/>
+                <TextBlock x:Name="CnoTB" Text="课程号：" Foreground="DarkSlateGray" FontSize="20" Margin="10"/>
+                <TextBlock x:Name="TnameTB" Text="任课教师：" Foreground="DarkSlateGray" FontSize="20" Margin="10"/>
+                <TextBlock x:Name="CreditTB" Text="学分：" Foreground="DarkSlateGray" FontSize="20" Margin="10"/>
+                <ToggleButton x:Name="ChooseToggle" Content="选课" Style="{StaticResource ToggleButtonRevealStyle}" Margin="10" Width="100" Foreground="White" Background="{x:Bind SnoTB.Foreground}" CornerRadius="15" Click="ChooseToggle_Click"/>
+            </StackPanel>
+        </ContentDialog>
+
+        <ContentDialog x:Name="MyCourseDialog"
+                       Title="课程详情"
+                       Foreground="{x:Bind SnoTB.Foreground}"
+                       CloseButtonText="退出"
+                       BorderBrush="{x:Bind SnoTB.Foreground}"
+                       DefaultButton="Close">
+            <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <TextBlock x:Name="myCnameTB" Text="课程名：" Foreground="DarkSlateGray" FontSize="20" Margin="10"/>
+                <TextBlock x:Name="myCnoTB" Text="课程号：" Foreground="DarkSlateGray" FontSize="20" Margin="10"/>
+                <TextBlock x:Name="myTnameTB" Text="任课教师：" Foreground="DarkSlateGray" FontSize="20" Margin="10"/>
+                <TextBlock x:Name="myScoreTB" Text="成绩：" Foreground="DarkSlateGray" FontSize="20" Margin="10"/>
+            </StackPanel>
+        </ContentDialog>
+
+        <ContentDialog x:Name="UpdateDialog"
+                       Title="修改个人信息"
+                       Foreground="{x:Bind SnoTB.Foreground}"
+                       PrimaryButtonText="确认"
+                       CloseButtonText="取消"
+                       BorderBrush="{x:Bind SnoTB.Foreground}"
+                       DefaultButton="Primary"
+                       PrimaryButtonClick="UpdateDialog_PrimaryButtonClick">
+            <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <TextBlock  x:Name="SNameTB2" Text="姓名：" Margin="10" Foreground="{x:Bind SnoTB.Foreground}"/>
+                <TextBlock x:Name="SnoTB2" Text="学号："  Margin="10" Foreground="{x:Bind SnoTB.Foreground}"/>
+                <TextBox x:Name="AgeTB2" Text="" PlaceholderText="年龄"  Margin="10" Foreground="{x:Bind SnoTB.Foreground}" CornerRadius="10"/>
+                <TextBox x:Name="SexTB2" Text="" PlaceholderText="性别" BorderBrush="{x:Bind SnoTB.Foreground}" Margin="10" CornerRadius="10"/>
+            </StackPanel>
+        </ContentDialog>
+
+        <ContentDialog x:Name="UpdatePasswordDialog"
+                       Title="修改密码"
+                       Foreground="{x:Bind SnoTB.Foreground}"
+                       PrimaryButtonText="确认"
+                       CloseButtonText="取消"
+                       BorderBrush="{x:Bind SnoTB.Foreground}"
+                       DefaultButton="Primary"
+                       PrimaryButtonClick="UpdatePasswordDialog_PrimaryButtonClick">
+            <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                <TextBox x:Name="OldPasswordTB" Text="" PlaceholderText="原密码"  Margin="10" Foreground="{x:Bind SnoTB.Foreground}" CornerRadius="10"/>
+                <TextBox x:Name="NewPasswordTB" Text="" PlaceholderText="新密码" BorderBrush="{x:Bind SnoTB.Foreground}" Margin="10" CornerRadius="10"/>
+                <TextBox x:Name="ConfirmNewPasswordTB" Text="" PlaceholderText="确认新密码" BorderBrush="{x:Bind SnoTB.Foreground}" Margin="10" CornerRadius="10"/>
+            </StackPanel>
+        </ContentDialog>
     </Grid>
 </Page>
