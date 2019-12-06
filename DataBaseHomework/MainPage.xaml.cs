@@ -1,7 +1,6 @@
 ﻿using DataBaseHomework.Models;
 using DataBaseHomework.View;
-using SQLite.Net;
-using SQLite.Net.Platform.WinRT;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,7 +39,7 @@ namespace DataBaseHomework
             var applicationView = CoreApplication.GetCurrentView();
             applicationView.TitleBar.ExtendViewIntoTitleBar = true;
             //建立数据库连接   
-            conn = new SQLiteConnection(new SQLitePlatformWinRT(), path);
+            conn = new SQLiteConnection(path);
             //建表              
             conn.CreateTable(typeof(Teacher));
             conn.CreateTable(typeof(Student));
