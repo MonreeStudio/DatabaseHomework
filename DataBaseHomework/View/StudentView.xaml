@@ -12,11 +12,12 @@
 
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition />
-            <RowDefinition /> 
         </Grid.RowDefinitions>
         <StackPanel VerticalAlignment="Center" Grid.Row="0">
-            <TextBlock x:Name="HelloTB" Text="赖夏昕，你好。"  Margin="30,80,30,0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="38"/>
+            <TextBlock x:Name="HelloTB" Text="赖夏昕，你好。"  Margin="30,120,30,0" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="38"/>
             <Border Background="White" Margin="50">
                 <controls:DropShadowPanel BlurRadius="25"
                                   ShadowOpacity="0.6"
@@ -34,5 +35,30 @@
                 </controls:DropShadowPanel>
             </Border>
         </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
+            <Button x:Name="ShowCourseListBtn" Content="查看选课列表" CornerRadius="15" Margin="10" Background="{x:Bind SnoTB.Foreground}" Foreground="White" Click="ShowCourseListBtn_Click"/>
+            <Button x:Name="UpdateInfoBtn" Content="修改个人信息" CornerRadius="15" Foreground="White" Background="{x:Bind SnoTB.Foreground}" Margin="10"/>
+            <Button x:Name="UpdatePasswordBtn" Content="修改密码" CornerRadius="15" Foreground="White" Background="{x:Bind SnoTB.Foreground}" Margin="10"/>
+        </StackPanel>
+        <Border x:Name="CourseBorder" Visibility="Visible" Grid.Row="3" Grid.ColumnSpan="2" Margin="20" BorderBrush="{x:Bind SnoTB.Foreground}" BorderThickness="3" CornerRadius="10">
+            <ListView ItemsSource="{x:Bind CouViewModel.CourseDatas}" ItemClick="ListView_ItemClick">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="local1:CourseData">
+                        <StackPanel Orientation="Horizontal" >
+                            <TextBlock Text="{x:Bind Cname}" Width="200" FontSize="23" Margin="10,10,50,10"/>
+                            <TextBlock Text="{x:Bind Cno}" Width="200" FontSize="23" Margin="10,10,50,10"/>
+                            <TextBlock Text="{x:Bind Tno}" FontSize="23" Margin="10,10,50,10"/>
+                            <TextBlock Text="{x:Bind Credit}" FontSize="23" Margin="10,10,50,10"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Border>
     </Grid>
 </Page>
